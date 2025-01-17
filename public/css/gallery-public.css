@@ -1,0 +1,230 @@
+/* Gallery Container */
+.gallery-container {
+    display: flex;
+    gap: 30px;
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Filters Section */
+.gallery-filters {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.filter-section {
+    margin-bottom: 30px;
+    background: #f8f8f8;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.filter-section h3 {
+    margin: 0 0 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.1em;
+}
+
+.filter-search {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.filter-options {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.filter-options label {
+    display: block;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+.filter-options input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.gallery-item {
+    background: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px);
+}
+
+.gallery-item-image {
+    position: relative;
+    padding-top: 75%; /* 4:3 Aspect Ratio */
+}
+
+.gallery-item-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-item-info {
+    padding: 15px;
+}
+
+.gallery-item-info h3 {
+    margin: 0 0 10px;
+    font-size: 1.1em;
+}
+
+.gallery-item-info p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* Detail Sidebar */
+.gallery-detail-sidebar {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+/* Add margin for admin users */
+.admin-bar .gallery-detail-sidebar {
+    top: 32px; /* Standard WordPress admin bar height */
+}
+
+@media screen and (max-width: 782px) {
+    .admin-bar .gallery-detail-sidebar {
+        top: 46px; /* WordPress admin bar height on mobile */
+    }
+}
+
+/* Edit Button Styles */
+.edit-button {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #0073aa;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 3px;
+    margin: 10px 0;
+    transition: background 0.3s ease;
+}
+
+.edit-button:hover {
+    background: #005177;
+    color: #fff;
+}
+
+.gallery-detail-sidebar.active {
+    right: 0;
+}
+
+.close-sidebar {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+}
+
+.detail-content {
+    padding: 20px;
+}
+
+.detail-content img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.detail-content h2 {
+    margin: 0 0 15px;
+}
+
+.detail-content p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.detail-navigation {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+}
+
+.nav-prev,
+.nav-next {
+    padding: 8px 15px;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.nav-prev:hover,
+.nav-next:hover {
+    background: #eee;
+}
+
+/* No Items Message */
+.no-items {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px;
+    background: #f8f8f8;
+    border-radius: 5px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .gallery-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .gallery-filters {
+        width: 100%;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .gallery-detail-sidebar {
+        width: 100%;
+        right: -100%;
+    }
+}

@@ -1,0 +1,75 @@
+/* Admin Gallery Styles */
+
+/* Meta Box Styles */
+.gallery-meta-box {
+    padding: 12px;
+}
+
+.gallery-meta-box label {
+    display: block;
+    font-weight: 600;
+    margin: 10px 0 5px;
+}
+
+.gallery-meta-box input[type="text"],
+.gallery-meta-box input[type="date"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+/* Gallery Item List Styles */
+.column-thumbnail {
+    width: 100px;
+}
+
+.column-thumbnail img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Taxonomy Management */
+.taxonomy-artist .form-field,
+.taxonomy-exhibition .form-field {
+    margin: 1em 0;
+}
+
+.taxonomy-artist .form-field label,
+.taxonomy-exhibition .form-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.taxonomy-artist .form-field input[type="text"],
+.taxonomy-exhibition .form-field input[type="text"] {
+    width: 95%;
+    padding: 8px;
+}
+
+/* Gallery Item Edit Screen */
+.gallery-item-details {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.gallery-item-details h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Responsive Admin Styles */
+@media screen and (max-width: 782px) {
+    .column-thumbnail {
+        width: 60px;
+    }
+    
+    .gallery-meta-box input[type="text"],
+    .gallery-meta-box input[type="date"] {
+        font-size: 16px;
+    }
+}
