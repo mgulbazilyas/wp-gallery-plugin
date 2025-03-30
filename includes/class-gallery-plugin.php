@@ -26,6 +26,7 @@ class Gallery_Plugin {
         require_once GALLERY_PLUGIN_DIR . 'includes/class-gallery-loader.php';
         require_once GALLERY_PLUGIN_DIR . 'includes/class-gallery-admin.php';
         require_once GALLERY_PLUGIN_DIR . 'includes/class-gallery-frontend.php';
+        require_once GALLERY_PLUGIN_DIR . 'includes/class-gallery-scripts.php';
 
         $this->loader = new Gallery_Loader();
     }
@@ -35,6 +36,7 @@ class Gallery_Plugin {
      */
     private function define_admin_hooks() {
         $plugin_admin = new Gallery_Admin();
+        $plugin_scripts = new Gallery_Scripts();
 
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');

@@ -12,6 +12,60 @@ class Gallery_Frontend {
         add_action('wp_ajax_nopriv_filter_gallery', array($this, 'filter_gallery'));
         add_action('wp_ajax_get_all_items', array($this, 'get_all_items'));
         add_action('wp_ajax_nopriv_get_all_items', array($this, 'get_all_items'));
+        add_action('wp_ajax_search_exhibitions', array($this, 'search_exhibitions'));
+        add_action('wp_ajax_nopriv_search_exhibitions', array($this, 'search_exhibitions'));
+        add_action('wp_ajax_search_artists', array($this, 'search_artists'));
+        add_action('wp_ajax_nopriv_search_artists', array($this, 'search_artists'));
+    }
+
+    /**
+     * AJAX handler for searching exhibitions
+     */
+    public function search_exhibitions() {
+        check_ajax_referer('gallery_filter_nonce', 'nonce');
+        
+        $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
+        
+        $terms = get_terms(array(
+            'taxonomy' => 'exhibition',
+            'hide_empty' => true,
+            'search' => $search,
+        ));
+
+        $results = array();
+        foreach ($terms as $term) {
+            $results[] = array(
+                'id' => $term->slug,
+                'text' => $term->name
+            );
+        }
+
+        wp_send_json(array('results' => $results));
+    }
+
+    /**
+     * AJAX handler for searching artists
+     */
+    public function search_artists() {
+        check_ajax_referer('gallery_filter_nonce', 'nonce');
+        
+        $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
+        
+        $terms = get_terms(array(
+            'taxonomy' => 'artist',
+            'hide_empty' => false,
+            'search' => $search,
+        ));
+
+        $results = array();
+        foreach ($terms as $term) {
+            $results[] = array(
+                'id' => $term->slug,
+                'text' => $term->name
+            );
+        }
+
+        wp_send_json(array('results' => $results));
     }
 
     /**
@@ -76,10 +130,24 @@ class Gallery_Frontend {
      * Register the JavaScript for the public-facing side of the site.
      */
     public function enqueue_scripts() {
+        // Enqueue Select2
+        wp_enqueue_style(
+            'select2',
+            'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css'
+        );
+        
+        wp_enqueue_script(
+            'select2',
+            'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js',
+            array('jquery'),
+            '4.1.0',
+            true
+        );
+
         wp_enqueue_script(
             'gallery-plugin-public',
             GALLERY_PLUGIN_URL . 'public/js/gallery-public.js',
-            array('jquery'),
+            array('jquery', 'select2'),
             GALLERY_PLUGIN_VERSION,
             true
         );
@@ -137,30 +205,24 @@ class Gallery_Frontend {
             <div class="gallery-filters">
                 <div class="filter-section">
                     <h3><?php _e('Exhibitions', 'gallery-plugin'); ?></h3>
-                    <input type="text" class="filter-search" data-filter="exhibition" 
-                           placeholder="<?php _e('Search exhibitions...', 'gallery-plugin'); ?>">
-                    <div class="filter-options">
+                    <select class="filter-select" name="exhibition[]" multiple="multiple" data-placeholder="<?php _e('Select exhibitions...', 'gallery-plugin'); ?>">
                         <?php foreach ($exhibitions as $exhibition) : ?>
-                            <label>
-                                <input type="checkbox" name="exhibition[]" value="<?php echo esc_attr($exhibition->slug); ?>">
+                            <option value="<?php echo esc_attr($exhibition->slug); ?>">
                                 <?php echo esc_html($exhibition->name); ?>
-                            </label>
+                            </option>
                         <?php endforeach; ?>
-                    </div>
+                    </select>
                 </div>
 
                 <div class="filter-section">
                     <h3><?php _e('Artists', 'gallery-plugin'); ?></h3>
-                    <input type="text" class="filter-search" data-filter="artist" 
-                           placeholder="<?php _e('Search artists...', 'gallery-plugin'); ?>">
-                    <div class="filter-options">
+                    <select class="filter-select" name="artist[]" multiple="multiple" data-placeholder="<?php _e('Select artists...', 'gallery-plugin'); ?>">
                         <?php foreach ($artists as $artist) : ?>
-                            <label>
-                                <input type="checkbox" name="artist[]" value="<?php echo esc_attr($artist->slug); ?>">
+                            <option value="<?php echo esc_attr($artist->slug); ?>">
                                 <?php echo esc_html($artist->name); ?>
-                            </label>
+                            </option>
                         <?php endforeach; ?>
-                    </div>
+                    </select>
                 </div>
             </div>
 
@@ -231,11 +293,11 @@ class Gallery_Frontend {
                 $artist_terms = wp_get_post_terms($post_id, 'artist');
                 $exhibition_terms = wp_get_post_terms($post_id, 'exhibition');
                 ?>
-                <div class="gallery-item" data-id="<?php echo esc_attr($post_id); ?>">
-                    <div class="gallery-item-image">
+                <div class="gk-gallery-item" data-id="<?php echo esc_attr($post_id); ?>">
+                    <div class="gk-gallery-item-image">
                         <img src="<?php echo esc_url($image); ?>" alt="<?php echo esc_attr(get_the_title()); ?>">
                     </div>
-                    <div class="gallery-item-info">
+                    <div class="gk-gallery-item-info">
                         <h3><?php the_title(); ?></h3>
                         <?php if (!empty($artist_terms)) : ?>
                             <p class="artist"><?php echo esc_html($artist_terms[0]->name); ?></p>

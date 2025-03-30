@@ -49,14 +49,14 @@
 }
 
 /* Gallery Item Edit Screen */
-.gallery-item-details {
+.gk-gallery-item-details {
     background: #fff;
     border: 1px solid #ccd0d4;
     padding: 15px;
     margin: 15px 0;
 }
 
-.gallery-item-details h3 {
+.gk-gallery-item-details h3 {
     margin-top: 0;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;

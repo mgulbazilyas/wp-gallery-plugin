@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Gallery Plugin
  * Description: A WordPress plugin for managing and displaying image galleries with advanced filtering capabilities.
- * Version: 1.0.0
+ * Version: 2.0.1
  * Author: Your Name
  * License: GPL-2.0+
  * Text Domain: gallery-plugin

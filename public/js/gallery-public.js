@@ -5,13 +5,39 @@ jQuery(document).ready(function($) {
     var $container = $('.gallery-container');
     var $grid = $('.gallery-grid');
     var $sidebar = $('.gallery-detail-sidebar');
-    var $filterInputs = $('.filter-options input[type="checkbox"]');
-    var $searchInputs = $('.filter-search');
+    var $filterSelects = $('.filter-select');
     var currentItemId = null;
 
     // Cache for all gallery items
     var itemsCache = {};
     var displayedItems = [];
+
+    // Initialize Select2
+    $('.filter-select').each(function() {
+        var $select = $(this);
+        var filterType = $select.attr('name').replace('[]', '');
+        
+        $select.select2({
+            width: '100%',
+            ajax: {
+                url: galleryPluginAjax.ajaxurl,
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        action: 'search_' + filterType + 's', // exhibitions or artists
+                        search: params.term,
+                        nonce: galleryPluginAjax.nonce
+                    };
+                },
+                processResults: function(data) {
+                    return data;
+                },
+                cache: true
+            },
+            minimumInputLength: 0
+        });
+    });
 
     // Load all items on page load
     function loadAllItems() {
@@ -41,11 +67,10 @@ jQuery(document).ready(function($) {
         };
 
         // Collect selected filters
-        $filterInputs.each(function() {
-            if ($(this).is(':checked')) {
-                var filterType = $(this).attr('name').replace('[]', '');
-                filters[filterType].push($(this).val());
-            }
+        $filterSelects.each(function() {
+            var filterType = $(this).attr('name').replace('[]', '');
+            var selectedValues = $(this).val() || [];
+            filters[filterType] = selectedValues;
         });
 
         // Filter items client-side
@@ -71,11 +96,11 @@ jQuery(document).ready(function($) {
 
         var html = items.map(function(item) {
             return `
-                <div class="gallery-item" data-id="${item.id}">
-                    <div class="gallery-item-image">
+                <div class="gk-gallery-item" data-id="${item.id}">
+                    <div class="gk-gallery-item-image">
                         <img src="${item.image}" alt="${item.title}">
                     </div>
-                    <div class="gallery-item-info">
+                    <div class="gk-gallery-item-info">
                         <h3>${item.title}</h3>
                         ${item.artist ? `<p class="artist">${item.artist}</p>` : ''}
                         ${item.exhibition ? `<p class="exhibition">${item.exhibition}</p>` : ''}
@@ -88,28 +113,11 @@ jQuery(document).ready(function($) {
     }
 
     // Handle filter changes
-    $filterInputs.on('change', updateGallery);
-
-    // Handle filter search
-    $searchInputs.on('input', function() {
-        var searchTerm = $(this).val().toLowerCase();
-        var filterType = $(this).data('filter');
-        
-        $('.filter-options input[name="' + filterType + '[]"]').each(function() {
-            var $label = $(this).parent();
-            var labelText = $label.text().toLowerCase();
-            
-            if (labelText.includes(searchTerm)) {
-                $label.show();
-            } else {
-                $label.hide();
-            }
-        });
-    });
+    $filterSelects.on('change', updateGallery);
 
     // Initialize gallery items
     function initializeItems() {
-        $('.gallery-item').on('click', function() {
+        $('.gk-gallery-item').on('click', function() {
             var itemId = $(this).data('id');
             showItemDetails(itemId);
         });

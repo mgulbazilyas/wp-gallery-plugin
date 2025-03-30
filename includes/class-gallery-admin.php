@@ -65,7 +65,7 @@ class Gallery_Admin {
             'show_ui'            => true,
             'show_in_menu'       => true,
             'query_var'          => true,
-            'rewrite'            => array('slug' => 'gallery-item'),
+            'rewrite'            => array('slug' => 'gk-gallery-item'),
             'capability_type'    => 'post',
             'has_archive'        => true,
             'hierarchical'       => false,
