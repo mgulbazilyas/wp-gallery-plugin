@@ -8,7 +8,7 @@ class Gallery_Scripts {
      */
     public function __construct() {
         // Add settings page
-        // add_action('admin_menu', array($this, 'add_scripts_settings_page'));
+        add_action('admin_menu', array($this, 'add_scripts_settings_page'));
         
         // Register WP-CLI commands if WP-CLI is available
         if (defined('WP_CLI') && WP_CLI) {
@@ -223,47 +223,47 @@ class Gallery_Scripts {
 
     public function process_trashed_products(){
         // Get trashed products
-$trashed_products = get_posts(array(
-    'post_type' => 'product',
-    'post_status' => 'trash',
-    'posts_per_page' => -1
-));
+        $trashed_products = get_posts(array(
+            'post_type' => 'product',
+            'post_status' => 'trash',
+            'posts_per_page' => -1
+        ));
 
-// Process each trashed product
-foreach ($trashed_products as $product) {
-    // Update post type to 'gallery_item'
-    $result = wp_update_post(array(
-        'ID' => $product->ID,
-        'post_type' => 'gallery_item'
-    ));
+        // Process each trashed product
+        foreach ($trashed_products as $product) {
+            // Update post type to 'gallery_item'
+            $result = wp_update_post(array(
+                'ID' => $product->ID,
+                'post_type' => 'gallery_item'
+            ));
 
-    if ($result) {
-        // Get product title and explode it with "-"
-        $title_parts = explode('-', $product->post_title);
-        if (count($title_parts) > 0) {
-            $artist_name = trim($title_parts[0]);
+            if ($result) {
+                // Get product title and explode it with "-"
+                $title_parts = explode('-', $product->post_title);
+                if (count($title_parts) > 0) {
+                    $artist_name = trim($title_parts[0]);
 
-            // Attach product to 'exhibition' taxonomy
-            $exhibition_term_id = 241; // Assuming the ID of the first found exhibition is always 241
-            wp_set_post_terms($product->ID, array($exhibition_term_id), 'exhibition', true);
+                    // Attach product to 'exhibition' taxonomy
+                    $exhibition_term_id = 384; // Assuming the ID of the first found exhibition is always 241
+                    wp_set_post_terms($product->ID, array($exhibition_term_id), 'exhibition', true);
 
-            // Attach product to 'artist' taxonomy
-            $artist_term = term_exists($artist_name, 'artist');
-            if ($artist_term && is_array($artist_term)) {
-                $term_id = $artist_term['term_id'];
-            } else {
-                $result = wp_insert_term($artist_name, 'artist');
-                if (is_wp_error($result)) {
-                    // Handle the error
-                    continue;
+                    // Attach product to 'artist' taxonomy
+                    $artist_term = term_exists($artist_name, 'artist');
+                    if ($artist_term && is_array($artist_term)) {
+                        $term_id = $artist_term['term_id'];
+                    } else {
+                        $result = wp_insert_term($artist_name, 'artist');
+                        if (is_wp_error($result)) {
+                            // Handle the error
+                            continue;
+                        }
+                        $term_id = $result['term_id'];
+                    }
+
+                    wp_set_post_terms($product->ID, array($term_id), 'artist', true);
                 }
-                $term_id = $result['term_id'];
             }
-
-            wp_set_post_terms($product->ID, array($term_id), 'artist', true);
         }
-    }
-}
     }
 
     
