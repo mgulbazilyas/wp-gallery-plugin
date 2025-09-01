@@ -6,6 +6,7 @@
  * Author: Your Name
  * License: GPL-2.0+
  * Text Domain: gallery-plugin
+ * Update URI: false
  */
 
 // If this file is called directly, abort.
@@ -20,6 +21,24 @@ define('GALLERY_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 // Include the main plugin class
 require_once GALLERY_PLUGIN_DIR . 'includes/class-gallery-plugin.php';
+
+// Prevent WordPress.org updates from replacing this custom plugin (defense-in-depth for older WP versions)
+add_filter('site_transient_update_plugins', function ($value) {
+    $plugin_basename = plugin_basename(__FILE__);
+    if (is_object($value) && isset($value->response[$plugin_basename])) {
+        unset($value->response[$plugin_basename]);
+    }
+    return $value;
+}, 999);
+
+// Ensure auto-updates never run for this plugin specifically
+add_filter('auto_update_plugin', function ($update, $item) {
+    $plugin_basename = plugin_basename(__FILE__);
+    if (isset($item->plugin) && $item->plugin === $plugin_basename) {
+        return false;
+    }
+    return $update;
+}, 999, 2);
 
 /**
  * Begins execution of the plugin.
